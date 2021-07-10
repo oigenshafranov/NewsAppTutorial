@@ -4,7 +4,7 @@ import "net/http"
 
 type Client struct {
 	http     *http.Client
-	ApiKey   string
+	key      string
 	PageSize int
 }
 
