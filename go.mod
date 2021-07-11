@@ -1,4 +1,6 @@
-module github.com/freshman-tech/news-demo-starter-files
+// Initial module
+// module github.com/freshman-tech/news-demo-starter-files
+module  github.com/oigenshafranov/NewsAppTutorial
 
 go 1.15
 
