@@ -40,7 +40,7 @@ func searchHandler(newsapi *news.Client) http.HandlerFunc {
 			return
 		}
 
-		fmt.Println("%+v", results)
+		fmt.Printf("%+v", results)
 		// fmt.Println("Search Query is:", searchQuery)
 		// fmt.Print("Page is:", page)
 
