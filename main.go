@@ -17,7 +17,6 @@ var tpl = template.Must(template.ParseFiles("index.html"))
 
 func indexHandler(w http.ResponseWriter, r *http.Request) {
 	tpl.Execute(w, nil)
-	//	w.Write([]byte("<h1>Hello World!</h1>"))
 }
 
 func searchHandler(newsapi *news.Client) http.HandlerFunc {
@@ -41,8 +40,6 @@ func searchHandler(newsapi *news.Client) http.HandlerFunc {
 		}
 
 		fmt.Printf("%+v", results)
-		// fmt.Println("Search Query is:", searchQuery)
-		// fmt.Print("Page is:", page)
 
 	}
 }
