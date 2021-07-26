@@ -53,19 +53,35 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
 
 func searchHandler(newsapi *news.Client) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		search := &Search{}
 		u, err := url.Parse(r.URL.String())
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 		params := u.Query()
-		searchQuery := params.Get("q")
+		search.Query = params.Get("q")
+
+		if len(search.Query) == 0 {
+			search := &Search{
+				Results: &news.Results{},
+			}
+
+			buf := &bytes.Buffer{}
+			err = tpl.Execute(buf, search)
+			if err != nil {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+			}
+
+			buf.WriteTo(w)
+			return
+		}
 		page := params.Get("page")
 		if page == "" {
 			page = "1"
 		}
 
-		results, err := newsapi.FetchEverything(searchQuery, page)
+		results, err := newsapi.FetchEverything(search.Query, page)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
@@ -77,12 +93,9 @@ func searchHandler(newsapi *news.Client) http.HandlerFunc {
 			return
 		}
 
-		search := &Search{
-			Query:      searchQuery,
-			NextPage:   nextPage,
-			TotalPages: int(math.Ceil(float64(results.TotalResults) / float64(newsapi.PageSize))),
-			Results:    results,
-		}
+		search.NextPage = nextPage
+		search.TotalPages = int(math.Ceil(float64(results.TotalResults) / float64(newsapi.PageSize)))
+		search.Results = results
 
 		if ok := !search.IsLastPage(); ok {
 			search.NextPage++
